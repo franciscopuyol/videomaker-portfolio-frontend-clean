@@ -1,0 +1,506 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 0%; /* #000000 */
+  --foreground: 0 0% 100%; /* #FFFFFF */
+  --muted: 240 4% 16%; /* #2A2A2A */
+  --muted-foreground: 240 5% 64.9%; /* #A3A3A3 */
+  --popover: 0 0% 9%; /* #171717 */
+  --popover-foreground: 0 0% 98%; /* #FAFAFA */
+  --card: 0 0% 9%; /* #171717 */
+  --card-foreground: 0 0% 98%; /* #FAFAFA */
+  --border: 240 3.7% 15.9%; /* #262626 */
+  --input: 240 3.7% 15.9%; /* #262626 */
+  --primary: 0 100% 50%; /* #FF0000 */
+  --primary-foreground: 0 0% 100%; /* #FFFFFF */
+  --secondary: 240 3.7% 15.9%; /* #262626 */
+  --secondary-foreground: 0 0% 98%; /* #FAFAFA */
+  --accent: 240 3.7% 15.9%; /* #262626 */
+  --accent-foreground: 0 0% 98%; /* #FAFAFA */
+  --destructive: 0 84.2% 60.2%; /* #EF4444 */
+  --destructive-foreground: 0 0% 98%; /* #FAFAFA */
+  --ring: 240 4.9% 83.9%; /* #D4D4D8 */
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    cursor: none !important;
+  }
+
+  /* Admin pages - disable custom cursor */
+  .admin-page * {
+    cursor: default !important;
+  }
+
+  /* Small mobile devices - iPhone 12/13 mini */
+  @media (max-width: 375px) {
+    .mobile-header-fix {
+      font-size: clamp(1.5rem, 8vw, 2.5rem) !important;
+      line-height: 1.1 !important;
+      margin-bottom: 1rem !important;
+    }
+    
+    .site-title {
+      padding: 0 0.5rem !important;
+    }
+  }
+
+  /* Medium mobile devices - iPhone 12/13 Pro Max */
+  @media (max-width: 414px) {
+    .mobile-header-fix {
+      font-size: clamp(1.75rem, 7vw, 2.75rem) !important;
+    }
+  }
+
+  /* Small Android phones */
+  @media (max-width: 480px) {
+    .mobile-header-fix {
+      font-size: clamp(2rem, 6vw, 3rem) !important;
+    }
+  }
+
+  /* General mobile optimizations */
+  @media (max-width: 768px) {
+    * {
+      cursor: auto !important;
+    }
+    
+    html {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+    
+    body {
+      -webkit-tap-highlight-color: rgba(255, 0, 0, 0.2);
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    
+    /* Allow text selection for content areas */
+    p, span, div[class*="text"], .bio-text {
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
+    }
+    
+    /* Improve text readability on mobile */
+    h1, h2, h3, h4, h5, h6 {
+      line-height: 1.2;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    
+    /* Mobile navigation improvements */
+    .mobile-menu-button {
+      min-width: 44px;
+      min-height: 44px;
+    }
+  }
+
+  /* Touch manipulation for interactive elements */
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 0, 0, 0.1);
+  }
+
+  /* Mobile video optimizations */
+  @media (max-width: 768px) {
+    video {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
+    
+    /* Smooth scrolling for mobile */
+    html {
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Prevent zoom on form inputs */
+    input[type="text"],
+    input[type="email"],
+    textarea,
+    select {
+      font-size: 16px !important;
+      -webkit-appearance: none;
+      border-radius: 0;
+    }
+  }
+
+  /* Restore normal cursor for admin pages */
+  .admin-page,
+  .admin-page *,
+  .admin-page *::before,
+  .admin-page *::after {
+    cursor: auto !important;
+  }
+
+  /* Force normal cursor for all interactive elements in admin */
+  .admin-page button,
+  .admin-page input,
+  .admin-page textarea,
+  .admin-page select,
+  .admin-page [role="button"],
+  .admin-page [tabindex],
+  .admin-page a {
+    cursor: pointer !important;
+  }
+
+  /* Ensure normal cursor in all admin dialogs and modals */
+  .admin-page [role="dialog"],
+  .admin-page [role="dialog"] *,
+  .admin-page [data-state="open"],
+  .admin-page [data-state="open"] *,
+  .admin-page .radix-dialog-content,
+  .admin-page .radix-dialog-content *,
+  .admin-page .dialog-content,
+  .admin-page .dialog-content *,
+  [data-radix-portal] .admin-page,
+  [data-radix-portal] .admin-page *,
+  body:has(.admin-page) [data-radix-portal],
+  body:has(.admin-page) [data-radix-portal] *,
+  body:has(.admin-page) [role="dialog"],
+  body:has(.admin-page) [role="dialog"] *,
+  body:has(.admin-page) [data-state="open"],
+  body:has(.admin-page) [data-state="open"] * {
+    cursor: auto !important;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground overflow-x-hidden;
+    font-family: "Inter", sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 0, 0, 0.1);
+    border: 2px solid #ff0000;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: 600;
+    color: #ff0000;
+    transition: all 0.1s ease;
+    transform: translate(-50%, -50%);
+  }
+
+  .rec-blink {
+    animation: rec-blink 1s infinite;
+  }
+
+  .video-thumbnail {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.4;
+    border: 2px solid transparent;
+  }
+
+  .video-thumbnail:hover {
+    opacity: 1;
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  .video-thumbnail.active {
+    opacity: 1;
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .bg-video-transition {
+    transition: opacity 0.1s ease;
+  }
+
+  .nav-link {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: #ffffff;
+    transition: width 0.3s ease;
+  }
+
+  .nav-link:hover::after {
+    width: 100%;
+  }
+
+  .nav-link:hover {
+    color: #ff0000 !important;
+  }
+
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    margin: 4rem 0;
+  }
+
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .work-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .video-thumbnail {
+      height: 200px;
+    }
+  }
+}
+
+@keyframes rec-blink {
+  0%, 50% { 
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  51%, 100% { 
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+}
+
+@keyframes float-up {
+  0% { 
+    transform: translateY(20px); 
+    opacity: 0; 
+  }
+  100% { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+}
+
+@keyframes fade-in {
+  0% { 
+    opacity: 0; 
+  }
+  100% { 
+    opacity: 1; 
+  }
+}
+
+.animate-float-up {
+  animation: float-up 0.8s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
+}
+
+@keyframes playhead {
+  0% { left: -2px; }
+  100% { left: 100%; }
+}
+
+.video-mask-text {
+  color: rgba(255, 255, 255, 0.1);
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.8);
+  text-stroke: 2px rgba(255, 255, 255, 0.8);
+  text-shadow: 
+    0 0 20px rgba(255, 255, 255, 0.3),
+    0 0 40px rgba(255, 255, 255, 0.2),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(1px);
+  position: relative;
+}
+
+.video-mask-text::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg, 
+    rgba(255, 255, 255, 0.2) 0%, 
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0.1) 75%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  z-index: 1;
+}
+
+/* Enhanced video mask effect for better visibility */
+.video-mask-text {
+  mix-blend-mode: screen;
+  filter: 
+    drop-shadow(0 0 10px rgba(255, 255, 255, 0.4))
+    drop-shadow(0 0 20px rgba(255, 255, 255, 0.2))
+    drop-shadow(0 0 30px rgba(255, 255, 255, 0.1));
+}
+
+/* Text masking with video background */
+.text-masked {
+  /* Clean typography with no effects */
+  text-shadow: none;
+  border: none;
+  outline: none;
+  position: relative;
+  
+  /* Typography */
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 0.85;
+}
+
+/* Fallback for browsers without background-clip support */
+@supports not (-webkit-background-clip: text) {
+  .text-masked {
+    color: white;
+    background: none !important;
+    -webkit-text-fill-color: white;
+    filter: none !important;
+  }
+}
+
+/* Complete Mobile Optimization - DO NOT affect desktop */
+@media (max-width: 768px) {
+  /* 1. Header Cut Fix - Francisco Puyol title */
+  .site-title, .contact-title, .top-heading, .hero-title {
+    padding-top: 24px !important;
+    font-size: clamp(1.8rem, 6vw, 3rem) !important;
+    line-height: 1.2 !important;
+    text-align: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-bottom: 2rem !important;
+  }
+
+  /* 2. Back to Work Button - Consistent style and position */
+  .back-to-work {
+    position: fixed !important;
+    bottom: 32px !important;
+    left: 20px !important;
+    padding: 6px 14px !important;
+    background-color: transparent !important;
+    font-size: 14px !important;
+    color: #ff0000 !important;
+    z-index: 999 !important;
+    border: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* 3. Three Dots Alignment Fix */
+  .dots-indicator {
+    position: absolute !important;
+    bottom: 24px !important;
+    right: 20px !important;
+    font-size: 18px !important;
+    opacity: 0.8 !important;
+  }
+
+  /* 4. Volume Icon Size Reduction */
+  .video-volume-icon, .video-overlay-icon {
+    width: 24px !important;
+    height: 24px !important;
+    opacity: 0.4 !important;
+    bottom: 10px !important;
+    right: 10px !important;
+  }
+
+  /* 5. Excessive Spacing Compression */
+  .section-spacing {
+    margin-top: 16px !important;
+    margin-bottom: 24px !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+
+  .watch-video-section {
+    margin-top: 16px !important;
+    padding-top: 0.5rem !important;
+  }
+
+  /* 6. Overlapping Elements Fix */
+  .mobile-header-fix {
+    padding-top: 80px !important;
+    margin-top: 0 !important;
+  }
+
+  /* 7. Video Detail Spacing */
+  .video-detail-hero {
+    padding-top: 24px !important;
+    padding-bottom: 16px !important;
+  }
+
+  .video-detail-content {
+    padding-top: 16px !important;
+    padding-bottom: 24px !important;
+  }
+
+  /* Project Info Grid Stacking */
+  .project-info-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+  }
+
+  /* Button Improvements */
+  button, .view-project-button {
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1rem !important;
+    min-width: 150px;
+  }
+
+  /* Three Dots Menu Positioning */
+  .mobile-menu-button {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+    justify-self: flex-end !important;
+  }
+
+  /* Video Loading Optimization */
+  video {
+    loading: lazy;
+    preload: none;
+  }
+}
+
+.view-project-button {
+  color: white;
+  transition: color 0.3s ease;
+}
+
+.view-project-button:hover {
+  color: #ff0000;
+}
