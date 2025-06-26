@@ -14,6 +14,11 @@ export async function apiRequest(
   // Get JWT token from localStorage
   const token = localStorage.getItem('authToken');
   
+  const API = import.meta.env.VITE_API_URL;
+  const fullUrl = url.startsWith('http')
+    ? url
+    : `${API}${url.startsWith('/') ? '' : '/'}${url}`;
+
   // Prepare headers with JWT token
   const headers = new Headers(options?.headers);
   if (token) {
@@ -32,7 +37,7 @@ export async function apiRequest(
     requestOptions.headers = headers;
   }
 
-  const res = await fetch(url, requestOptions);
+  const res = await fetch(fullUrl, requestOptions);
 
   await throwIfResNotOk(res);
   
@@ -60,9 +65,16 @@ export const getQueryFn: <T>(options: {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch(queryKey[0] as string, {
-      headers,
-    });
+    const API = import.meta.env.VITE_API_URL;
+const path = queryKey[0] as string;
+const fullUrl =
+  path.startsWith('http')
+    ? path
+    : `${API}${path.startsWith('/') ? '' : '/'}${path}`;
+
+const res = await fetch(fullUrl, {
+  headers,
+});
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
       return null;
