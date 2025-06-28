@@ -20,29 +20,24 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
 
-    try {
-      const response = await apiRequest('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+try {
+  const response = await apiRequest(
+    `${import.meta.env.VITE_API_URL}/api/login`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    }
+  );
 
-      login(response.token, response.user);
-      
-      toast({
-        title: 'Login successful',
-        description: 'Welcome back!',
-      });
+  login(response.token, response.user);
+  toast({
+    title: 'Login successful',
+    description: 'Welcome back!',
+  });
 
-      // Force a small delay to ensure state updates, then redirect
-      setTimeout(() => {
-        setLocation('/admin');
-        // Force page refresh to ensure proper state initialization
-        window.location.href = '/admin';
-      }, 500);
-    } catch (error: any) {
+  // …
+} catch (error: any) {
       toast({
         title: 'Login failed',
         description: error.message || 'Invalid credentials',
