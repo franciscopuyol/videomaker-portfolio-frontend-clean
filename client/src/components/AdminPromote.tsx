@@ -32,7 +32,7 @@ export default function AdminPromote() {
           <h1 className="text-2xl font-bold mb-4">Admin Access</h1>
           <p className="text-white/70 mb-6">Please log in to access admin features</p>
           <a 
-            href="/api/login"
+            href={${import.meta.env.VITE_API_URL}/api/login}
             className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition-colors"
           >
             Log In
