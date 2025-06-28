@@ -126,7 +126,7 @@ export default function ProjectUploaderFixed({ onSuccess, categories = [] }: Pro
           variant: "destructive",
         });
         setTimeout(() => {
-          window.location.href = {${import.meta.env.VITE_API_URL}/api/login};
+          window.location.href = `${import.meta.env.VITE_API_URL}/api/login`;
         }, 500);
         return;
       }
