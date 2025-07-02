@@ -1,100 +1,55 @@
-import { QueryClient, QueryFunction } from "@tanstack/react-query";
+/**
+ * Tiny wrapper em volta do fetch para:
+ *  - Grudar URL base do backend
+ *  - Inserir JWT no header Authorization
+ *  - Fazer tratamento simples de erros
+ *
+ * Use assim:
+ *   const data = await apiRequest('/api/projects');
+ */
 
-async function throwIfResNotOk(res: Response) {
-  if (!res.ok) {
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
-  }
-}
+const API_BASE =
+  import.meta.env.VITE_API_URL?.replace(/\/+$/, '') ||
+  'https://videomaker-portfolio-backend.onrender.com';
 
-export async function apiRequest(
-  url: string,
-  options?: RequestInit
-): Promise<any> {
-  // Get JWT token from localStorage
-  const token = localStorage.getItem('authToken');
-  
-  const API = import.meta.env.VITE_API_URL;
-  const fullUrl = url.startsWith('http')
-    ? url
-    : `${API}${url.startsWith('/') ? '' : '/'}${url}`;
+const ACCESS_TOKEN_KEY = 'authToken';
 
-  // Prepare headers with JWT token
-  const headers = new Headers(options?.headers);
-  if (token) {
-    headers.set('Authorization', `Bearer ${token}`);
-  }
+type FetchOptions = Omit<RequestInit, 'headers'> & {
+  headers?: Record<string, string>;
+};
 
-  // Prepare request options
-  const requestOptions: RequestInit = {
-    ...options,
-    headers,
-  };
+/** Retorna corpo JSON (já convertido) ou `undefined` para respostas 204/304. */
+export async function apiRequest<T = any>(
+  endpoint: string,
+  options: FetchOptions = {}
+): Promise<T> {
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
 
-  // Don't set Content-Type for FormData - let browser set it with boundary
-  if (options?.body instanceof FormData) {
-    headers.delete('Content-Type');
-    requestOptions.headers = headers;
-  }
-
-  const res = await fetch(fullUrl, requestOptions);
-
-  await throwIfResNotOk(res);
-  
-  // Handle empty responses
-  const contentType = res.headers.get("content-type");
-  if (contentType && contentType.includes("application/json")) {
-    return await res.json();
-  }
-  
-  return null;
-}
-
-type UnauthorizedBehavior = "returnNull" | "throw";
-export const getQueryFn: <T>(options: {
-  on401: UnauthorizedBehavior;
-}) => QueryFunction<T> =
-  ({ on401: unauthorizedBehavior }) =>
-  async ({ queryKey }) => {
-    // Get JWT token from localStorage
-    const token = localStorage.getItem('authToken');
-    
-    // Prepare headers with JWT token
-    const headers: HeadersInit = {};
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+  const response = await fetch(
+    // Garante que endpoint comece com /
+    `${API_BASE}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`,
+    {
+      credentials: 'include',
+      ...options,
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(options.headers || {})
+      }
     }
+  );
 
-    const API = import.meta.env.VITE_API_URL;
-const path = queryKey[0] as string;
-const fullUrl =
-  path.startsWith('http')
-    ? path
-    : `${API}${path.startsWith('/') ? '' : '/'}${path}`;
+  // 204 No-Content ou 304 Not-Modified → não há corpo a consumir
+  const hasBody = response.status !== 204 && response.status !== 304;
+  const data: any = hasBody ? await response.json().catch(() => ({})) : {};
 
-const res = await fetch(fullUrl, {
-  headers,
-});
+  if (!response.ok) {
+    // Se for 401, limpa token para forçar novo login
+    if (response.status === 401) localStorage.removeItem(ACCESS_TOKEN_KEY);
+    const message = data?.message || response.statusText;
+    throw new Error(message);
+  }
 
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
-    }
-
-    await throwIfResNotOk(res);
-    return await res.json();
-  };
-
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      queryFn: getQueryFn({ on401: "throw" }),
-      refetchInterval: false,
-      refetchOnWindowFocus: false,
-      staleTime: Infinity,
-      retry: false,
-    },
-    mutations: {
-      retry: false,
-    },
-  },
-});
+  return data as T;
+}
