@@ -2,7 +2,13 @@ import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { apiRequest } from '@/lib/queryClient';
@@ -12,7 +18,10 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // hook do Wouter para mudar de rota
   const [, setLocation] = useLocation();
+
   const { login } = useAuth();
   const { toast } = useToast();
 
@@ -20,24 +29,27 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
 
-try {
-  const response = await apiRequest(
-    `${import.meta.env.VITE_API_URL}/api/login`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    }
-  );
+    try {
+      const response = await apiRequest(
+        `${import.meta.env.VITE_API_URL}/api/login`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        },
+      );
 
-  login(response.token, response.user);
-  toast({
-    title: 'Login successful',
-    description: 'Welcome back!',
-  });
+      // 1 ▸ guarda o token/usuário no contexto
+      login(response.token, response.user);
 
-  // …
-} catch (error: any) {
+      toast({
+        title: 'Login successful',
+        description: 'Welcome back!',
+      });
+
+      // 2 ▸ vai para a área protegida
+      setLocation('/admin');
+    } catch (error: any) {
       toast({
         title: 'Login failed',
         description: error.message || 'Invalid credentials',
@@ -49,15 +61,23 @@ try {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black px-4" style={{ cursor: 'default' }}>
+    <div
+      className="min-h-screen flex items-center justify-center bg-black px-4"
+      style={{ cursor: 'default' }}
+    >
       <div className="w-full max-w-md bg-black border border-gray-800 rounded-lg p-8">
-        <h1 className="text-white text-center text-2xl font-bold mb-8" style={{ fontFamily: 'Oswald, Helvetica Neue, sans-serif' }}>
+        <h1
+          className="text-white text-center text-2xl font-bold mb-8"
+          style={{ fontFamily: 'Oswald, Helvetica Neue, sans-serif' }}
+        >
           Admin Access – Please Login
         </h1>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-white text-sm">Email</Label>
+            <Label htmlFor="email" className="text-white text-sm">
+              Email
+            </Label>
             <Input
               id="email"
               type="email"
@@ -70,7 +90,9 @@ try {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-white text-sm">Password</Label>
+            <Label htmlFor="password" className="text-white text-sm">
+              Password
+            </Label>
             <Input
               id="password"
               type="password"
@@ -81,8 +103,8 @@ try {
               style={{ cursor: 'text' }}
             />
           </div>
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition-colors"
             disabled={isLoading}
             style={{ cursor: 'pointer' }}
